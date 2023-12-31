@@ -2,9 +2,11 @@ use serde::Serialize;
 use serde_json::{Value, Map};
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize)]
+#[serde(untagged)]
 pub enum Params {
     Array(Vec<Value>),
     Map(Map<String, Value>),
+    BlockParams((String, bool)),
     None(())
 }
 
