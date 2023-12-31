@@ -64,21 +64,16 @@ impl EthRpcClient {
             .basic_auth(username, Some(password));
         }
 
-        match method {
-            RpcMethod::ChainId => {
-                let rpc_request = RpcRequest {
-                    jsonrpc: "2".to_string(),
-                    method: "eth_chainId".to_string(),
-                    params: None,
-                    id: 1
-                };
+        let rpc_request = RpcRequest {
+            jsonrpc: "2".to_string(),
+            method: method.get_method_name(),
+            params: method.get_parameters(),
+            id: 1
+        };
+        dbg!(&rpc_request);
+        dbg!(serde_json::to_string(&rpc_request));
 
-                requestBuilder = requestBuilder.json(&rpc_request);
-            },
-            RpcMethod::GetBlockByNumber { block, include_transactions } => ()
-        }
-
-        requestBuilder.send()
+        requestBuilder.json(&rpc_request).send()
     }
 
     pub async fn get_block(&self, param: &BlockParameter) {
