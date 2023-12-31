@@ -12,7 +12,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         client::Authentication::None
     );
     
-    let r = conn.make_request(eth::methods::RpcMethod::ChainId).await?;
+    let r = conn.make_request(eth::methods::RpcMethod::GetBlockByNumber { block: eth::methods::BlockParameter::Latest, include_transactions: false }).await?;
 
     println!("{}", r.text().await?);
     
