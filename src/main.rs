@@ -1,19 +1,21 @@
-use serde::{Serialize, Deserialize};
+use eth::client;
 
-#[derive(Serialize, Deserialize)]
-struct TestStruct {
-    name: String,
-    age: i32
-}
+mod eth;
 
-fn main() {
-    println!("Hello, world!");
 
-    let st = TestStruct {
-        name: "crack".to_string(),
-        age: 48
-    };
-    let serialized = serde_json::to_string(&st).unwrap();
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> { 
+    let conn = client::EthRpcClient::new(
+        "eth.llamarpc.com".to_string(),
+        443,
+        client::ConnectionProtocol::HTTPS,
+        client::Authentication::None
+    );
+    
+    let r = conn.make_request(eth::methods::RpcMethod::ChainId).await?;
 
-    println!("{}", serialized);
+    println!("{}", r.text().await?);
+    
+
+    Ok(())
 }
