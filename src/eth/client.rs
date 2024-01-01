@@ -71,7 +71,7 @@ impl EthRpcClient {
             id: 1
         };
         dbg!(&rpc_request);
-        dbg!(serde_json::to_string(&rpc_request));
+        dbg!(serde_json::to_string(&rpc_request).unwrap());
 
         requestBuilder.json(&rpc_request).send()
     }

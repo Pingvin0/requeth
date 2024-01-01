@@ -1,8 +1,10 @@
 use core::fmt;
 
+use primitive_types::U256;
 use serde::{Serialize, Deserialize};
+use serde_json::Value;
 
-use super::request::Params;
+use super::request::RpcParams;
 
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
@@ -39,7 +41,24 @@ impl Serialize for BlockParameter {
 
 #[derive(Debug)]
 pub enum RpcMethod {
+    ProtocolVersion,
+    Syncing,
+    Coinbase,
     ChainId,
+    Mining,
+    Hashrate,
+    GasPrice,
+    Accounts,
+    BlockNumber,
+    GetBalance {
+        address: String,
+        block: BlockParameter
+    },
+    GetStorageAt {
+        address: String,
+        position: U256,
+        block: BlockParameter
+    },
     GetBlockByNumber {
         block: BlockParameter,
         include_transactions: bool
@@ -54,15 +73,19 @@ impl RpcMethod {
         }
     }
 
-    pub fn get_parameters(&self) -> Option<Params> {
+    pub fn get_parameters(&self) -> Option<RpcParams> {
         match self {
-            RpcMethod::ChainId => None,
-            RpcMethod::GetBlockByNumber
-                { block, include_transactions }
-                => Some(Params::BlockParams(
-                    (format!("{}", block), *include_transactions)
-                ))
-            
+            RpcMethod::GetBalance { address, block }
+                => Some(RpcParams::Array(vec![
+                    Value::String(address.clone()),
+                    Value::String(format!("{}", block))
+                ])),
+            RpcMethod::GetBlockByNumber { block, include_transactions }
+                => Some(RpcParams::Array(vec![
+                    Value::String(format!("{}", block)),
+                    Value::Bool(*include_transactions)
+                ])),
+            _ => None,
         }
     }
 }

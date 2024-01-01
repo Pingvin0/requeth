@@ -3,10 +3,9 @@ use serde_json::{Value, Map};
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 #[serde(untagged)]
-pub enum Params {
+pub enum RpcParams {
     Array(Vec<Value>),
     Map(Map<String, Value>),
-    BlockParams((String, bool)),
     None(())
 }
 
@@ -16,6 +15,6 @@ pub struct RpcRequest {
     pub method: String,
     #[serde(default)]
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub params: Option<Params>,
+    pub params: Option<RpcParams>,
     pub id: i32
 }
